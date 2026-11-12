@@ -96,7 +96,7 @@ const newsBox = document.getElementById("dernieres-actualites");
 if (newsBox) {
   const esc = (x) => String(x).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const strip = (h) => { const d = document.createElement("div"); d.innerHTML = h; return (d.textContent || "").trim(); };
-  fetch("/actualites/wp-json/wp/v2/posts?per_page=3&_embed=wp:featuredmedia,wp:term")
+  fetch((newsBox.dataset.api || "") + "/wp-json/wp/v2/posts?per_page=3&_embed=wp:featuredmedia,wp:term")
     .then(r => r.ok ? r.json() : [])
     .then(posts => {
       if (!Array.isArray(posts) || !posts.length) return;
