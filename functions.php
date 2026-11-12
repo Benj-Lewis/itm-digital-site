@@ -4,6 +4,7 @@ if (!defined('ABSPATH')) exit;
 
 /* Adresse du site principal (menu, styles, images). À changer lors du passage sur le vrai domaine. */
 if (!defined('ITM_MAIN')) define('ITM_MAIN', 'https://mediumblue-elephant-588699.hostingersite.com');
+if (!defined('ITM_ASSETS_VER')) define('ITM_ASSETS_VER', '2026-11-12b');
 function itm_main($path = '/') { return rtrim(ITM_MAIN, '/') . $path; }
 
 add_action('after_setup_theme', function () {
@@ -18,9 +19,9 @@ add_action('after_setup_theme', function () {
 /* Feuilles de style et scripts : on réutilise ceux du site principal */
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('itm-fonts', 'https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Manrope:wght@400;500;600;700&display=swap', [], null);
-    wp_enqueue_style('itm-site', itm_main('/assets/style.css'), [], '1');
+    wp_enqueue_style('itm-site', itm_main('/assets/style.css'), [], ITM_ASSETS_VER);
     wp_enqueue_style('itm-actualites', get_stylesheet_uri(), ['itm-site'], wp_get_theme()->get('Version'));
-    wp_enqueue_script('itm-site', itm_main('/assets/site.js'), [], '1', true);
+    wp_enqueue_script('itm-site', itm_main('/assets/site.js'), [], ITM_ASSETS_VER, true);
 });
 
 /* Mise en place (une seule fois) : catégories, liens propres, article d'exemple retiré */
