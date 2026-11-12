@@ -479,3 +479,39 @@ footer{background:var(--navy-900);color:#9fb3e6;padding-block:56px calc(36px + e
 @media (max-width:960px){.news-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.news-card.feature{grid-template-columns:1fr}.news-card.feature .thumb{min-height:0;aspect-ratio:16/9}}
 @media (max-width:600px){.news-grid{grid-template-columns:1fr}.news-card.feature .nb{padding:22px}}
 
+
+/* CTA after a dark band: keep breathing room */
+.dark + .sec.tight,.dark + div + .sec.tight{padding-top:84px}
+@media (max-width:600px){.dark + .sec.tight,.dark + div + .sec.tight{padding-top:58px}}
+
+/* Animated illustrations */
+.panel.illus{display:grid;place-items:center}
+.illus-inner{position:absolute;inset:0;display:grid;place-items:center;padding:28px 18px 18px}
+.illus-svg{width:100%;height:100%;max-height:100%;overflow:visible}
+.illus-tag{position:absolute;left:22px;top:22px;color:#fff}
+.illus-svg *{transform-box:fill-box}
+@media (prefers-reduced-motion:no-preference){
+  .a-float{animation:i-float 6s ease-in-out infinite}
+  .a-grow{transform-origin:50% 100%;animation:i-grow 3.2s ease-in-out infinite}
+  .a-pulse{animation:i-pulse 1.6s ease-in-out infinite}
+  .a-rise{animation:i-rise 5s ease-in-out infinite}
+  .a-pop{transform-origin:50% 50%;animation:i-pop 5s ease-in-out infinite}
+  .a-load{transform-origin:0 50%;animation:i-load 5s ease-in-out infinite}
+  .a-wave{animation:i-wave 1.8s ease-in-out infinite}
+  .a-orbit{transform-box:view-box;animation:i-sway 9s ease-in-out infinite}
+  .a-type{transform-origin:0 50%;animation:i-type 6s steps(14,end) infinite}
+  .a-blink{animation:i-blink 1s steps(1) infinite}
+  .a-spin{transform-origin:50% 50%;animation:i-spin 6s linear infinite}
+  .a-d1{animation-delay:.25s}.a-d2{animation-delay:.5s}.a-d3{animation-delay:.75s}.a-d4{animation-delay:1s}.a-d5{animation-delay:1.25s}
+}
+@keyframes i-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes i-grow{0%,100%{transform:scaleY(.55)}50%{transform:scaleY(1)}}
+@keyframes i-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@keyframes i-rise{0%,100%{transform:translateY(6px);opacity:.85}50%{transform:translateY(-6px);opacity:1}}
+@keyframes i-pop{0%,8%{transform:scale(.6);opacity:0}16%,85%{transform:scale(1);opacity:1}100%{transform:scale(1);opacity:0}}
+@keyframes i-load{0%{transform:scaleX(.05)}60%,100%{transform:scaleX(1)}}
+@keyframes i-wave{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes i-sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes i-type{0%{clip-path:inset(0 100% 0 0)}45%,90%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 100% 0 0)}}
+@keyframes i-blink{50%{opacity:0}}
+@keyframes i-spin{to{transform:rotate(360deg)}}

@@ -8,9 +8,23 @@ const ITM = {
 /* ========================================= */
 
 const wa = (msg) => `https://wa.me/${ITM.whatsapp}?text=${encodeURIComponent(msg)}`;
+const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+/* Ouvre WhatsApp : sur téléphone, directement dans l'application (fonctionne aussi
+   dans les navigateurs intégrés de Facebook, Instagram, etc.) ; sinon WhatsApp Web. */
+function openWA(msg) {
+  const text = encodeURIComponent(msg || "Bonjour ITM Digital !");
+  if (isMobile) {
+    const fallback = setTimeout(() => { if (!document.hidden) window.location.href = `https://api.whatsapp.com/send?phone=${ITM.whatsapp}&text=${text}`; }, 1600);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) clearTimeout(fallback); }, { once: true });
+    window.location.href = `whatsapp://send?phone=${ITM.whatsapp}&text=${text}`;
+  } else {
+    window.open(`https://web.whatsapp.com/send?phone=${ITM.whatsapp}&text=${text}`, "_blank", "noopener");
+  }
+}
 document.querySelectorAll("[data-wa]").forEach(a => {
   a.href = wa(a.dataset.wa || "Bonjour ITM Digital !");
-  a.target = "_blank"; a.rel = "noopener";
+  a.rel = "noopener";
+  a.addEventListener("click", e => { e.preventDefault(); openWA(a.dataset.wa); });
 });
 document.querySelectorAll(".yr").forEach(n => n.textContent = new Date().getFullYear());
 
@@ -47,7 +61,7 @@ if (quote) quote.addEventListener("submit", e => {
     + (f.elements.phone && f.elements.phone.value.trim() ? `\nWhatsApp : ${f.elements.phone.value.trim()}` : "")
     + `\nService : ${f.elements.service.value}`
     + `\nProjet : ${f.elements.msg.value.trim() || "à discuter"}`;
-  window.open(wa(msg), "_blank", "noopener");
+  openWA(msg);
 });
 
 /* Paiement formation */
@@ -87,7 +101,7 @@ if (pay) {
           name = document.getElementById("p-name").value.trim(), link = ITM.paypal[amt];
     if (m === "Carte / PayPal" && link) { window.open(link, "_blank", "noopener"); return; }
     const msg = `Bonjour ITM Digital, je souhaite payer : ${product}\nMontant : ${amtEl.dataset.label} (${amt} $)\nMoyen : ${m}${name ? `\nNom : ${name}` : ""}\nMerci de m'envoyer les détails de paiement.`;
-    window.open(wa(msg), "_blank", "noopener");
+    openWA(msg);
   });
 }
 
