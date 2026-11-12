@@ -9,22 +9,17 @@ const ITM = {
 
 const wa = (msg) => `https://wa.me/${ITM.whatsapp}?text=${encodeURIComponent(msg)}`;
 const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-/* Ouvre WhatsApp : sur téléphone, directement dans l'application (fonctionne aussi
-   dans les navigateurs intégrés de Facebook, Instagram, etc.) ; sinon WhatsApp Web. */
+/* Ouvre la discussion WhatsApp via le lien officiel wa.me : il ouvre WhatsApp
+   ou WhatsApp Business, selon l'application installée chez le visiteur. */
 function openWA(msg) {
-  const text = encodeURIComponent(msg || "Bonjour ITM Digital !");
-  if (isMobile) {
-    const fallback = setTimeout(() => { if (!document.hidden) window.location.href = `https://api.whatsapp.com/send?phone=${ITM.whatsapp}&text=${text}`; }, 1600);
-    document.addEventListener("visibilitychange", () => { if (document.hidden) clearTimeout(fallback); }, { once: true });
-    window.location.href = `whatsapp://send?phone=${ITM.whatsapp}&text=${text}`;
-  } else {
-    window.open(`https://web.whatsapp.com/send?phone=${ITM.whatsapp}&text=${text}`, "_blank", "noopener");
-  }
+  const url = wa(msg || "Bonjour ITM Digital !");
+  if (isMobile) window.location.href = url;
+  else window.open(url, "_blank", "noopener");
 }
 document.querySelectorAll("[data-wa]").forEach(a => {
   a.href = wa(a.dataset.wa || "Bonjour ITM Digital !");
   a.rel = "noopener";
-  a.addEventListener("click", e => { e.preventDefault(); openWA(a.dataset.wa); });
+  if (!isMobile) a.target = "_blank";
 });
 document.querySelectorAll(".yr").forEach(n => n.textContent = new Date().getFullYear());
 
