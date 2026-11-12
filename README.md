@@ -5,3 +5,5 @@ Site de l'agence ITM Digital Communication (Kinshasa) : itmdigitalcommunication.
 - Branche `main` : le site (pages HTML, styles, images), publié à la racine du domaine.
 - Branche `wordpress-theme` : le thème WordPress « ITM Actualités », installé dans `actualites/wp-content/themes/itm-actualites`.
 - La rubrique Actualités (`/actualites/`) est gérée par WordPress.
+
+Déploiement automatique : chaque envoi sur `main` met le site à jour sur Hostinger.
