@@ -23,15 +23,24 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_script('itm-site', itm_main('/assets/site.js'), [], '1', true);
 });
 
-/* Catégories créées à l'activation du thème */
-add_action('after_switch_theme', function () {
+/* Mise en place (une seule fois) : catégories, liens propres, article d'exemple retiré */
+function itm_setup() {
     foreach (['Politique','Société','Économie','Éducation','Finance','Sport','Géopolitique'] as $c) {
         if (!term_exists($c, 'category')) wp_insert_term($c, 'category');
     }
+    $hello = get_page_by_path('hello-world', OBJECT, 'post');
+    if ($hello && $hello->post_date === $hello->post_modified) wp_trash_post($hello->ID);
+    $default = get_term((int) get_option('default_category'), 'category');
+    if ($default && !is_wp_error($default) && in_array($default->slug, ['uncategorized','non-classe','blog'], true)) {
+        wp_update_term($default->term_id, 'category', ['name' => 'Actualité', 'slug' => 'actualite']);
+    }
     update_option('posts_per_page', 10);
     update_option('permalink_structure', '/%postname%/');
+    update_option('itm_setup_version', 1);
     flush_rewrite_rules();
-});
+}
+add_action('after_switch_theme', 'itm_setup');
+add_action('init', function () { if ((int) get_option('itm_setup_version') < 1) itm_setup(); }, 20);
 
 add_filter('excerpt_length', fn() => 26);
 add_filter('excerpt_more', fn() => '…');
