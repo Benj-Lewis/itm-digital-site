@@ -2,6 +2,10 @@
 /* ITM Actualités — fonctions du thème */
 if (!defined('ABSPATH')) exit;
 
+/* Adresse du site principal (menu, styles, images). À changer lors du passage sur le vrai domaine. */
+if (!defined('ITM_MAIN')) define('ITM_MAIN', 'https://mediumblue-elephant-588699.hostingersite.com');
+function itm_main($path = '/') { return rtrim(ITM_MAIN, '/') . $path; }
+
 add_action('after_setup_theme', function () {
     add_theme_support('title-tag');
     add_theme_support('post-thumbnails');
@@ -14,10 +18,9 @@ add_action('after_setup_theme', function () {
 /* Feuilles de style et scripts : on réutilise ceux du site principal */
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('itm-fonts', 'https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Manrope:wght@400;500;600;700&display=swap', [], null);
-    $root = '//' . parse_url(home_url(), PHP_URL_HOST);
-    wp_enqueue_style('itm-site', $root . '/assets/style.css', [], '1');
+    wp_enqueue_style('itm-site', itm_main('/assets/style.css'), [], '1');
     wp_enqueue_style('itm-actualites', get_stylesheet_uri(), ['itm-site'], wp_get_theme()->get('Version'));
-    wp_enqueue_script('itm-site', $root . '/assets/site.js', [], '1', true);
+    wp_enqueue_script('itm-site', itm_main('/assets/site.js'), [], '1', true);
 });
 
 /* Catégories créées à l'activation du thème */
@@ -50,8 +53,7 @@ add_action('wp_head', function () {
         $img = '';
         $type = 'website';
     }
-    if (!$img) $img = home_url('/../assets/itm-logo.png');
-    $img = preg_replace('#/actualites/\.\./#', '/', $img);
+    if (!$img) $img = itm_main('/assets/itm-logo.png');
     echo "\n<meta name=\"description\" content=\"" . esc_attr($desc) . "\">\n";
     echo '<meta property="og:site_name" content="' . esc_attr($site) . "\">\n";
     echo '<meta property="og:type" content="' . $type . "\">\n";
@@ -62,7 +64,7 @@ add_action('wp_head', function () {
     echo '<meta property="og:locale" content="fr_FR">' . "\n";
     echo '<meta name="twitter:card" content="summary_large_image">' . "\n";
     echo '<meta name="theme-color" content="#071233">' . "\n";
-    echo '<link rel="icon" type="image/png" href="/assets/favicon.png">' . "\n";
+    echo '<link rel="icon" type="image/png" href="' . esc_url(itm_main('/assets/favicon.png')) . '">' . "\n";
 }, 1);
 
 /* Catégorie principale d'un article */
@@ -78,7 +80,7 @@ function itm_card($feature = false) {
     <a class="news-card<?php echo $feature ? ' feature' : ''; ?>" href="<?php the_permalink(); ?>">
       <div class="thumb">
         <?php if (has_post_thumbnail()) { the_post_thumbnail($feature ? 'large' : 'itm-card', ['loading' => 'lazy', 'alt' => esc_attr(get_the_title())]); }
-        else { echo '<span class="noimg"><img src="/assets/itm-icon.png" alt=""></span>'; } ?>
+        else { echo '<span class="noimg"><img src="' . esc_url(itm_main('/assets/itm-icon.png')) . '" alt=""></span>'; } ?>
       </div>
       <div class="nb">
         <div class="news-meta"><?php if ($cat) echo '<span class="cat">' . esc_html($cat->name) . '</span>'; ?><span><?php echo get_the_date('j F Y'); ?></span></div>

@@ -2,7 +2,7 @@
 <footer><div class="wrap">
   <div class="fgrid">
     <div class="fbrand">
-      <a class="brand" href="/"><img src="/assets/itm-icon.png" alt="" width="40" height="40"><span><b>ITM DIGITAL</b><small>COMMUNICATION</small></span></a>
+      <a class="brand" href="<?php echo esc_url(itm_main('/')); ?>"><img src="<?php echo esc_url(itm_main('/assets/itm-icon.png')); ?>" alt="" width="40" height="40"><span><b>ITM DIGITAL</b><small>COMMUNICATION</small></span></a>
       <p>Votre partenaire de confiance pour la transformation digitale, de la stratégie à l'exécution.</p>
       <div class="social">
         <a href="https://www.facebook.com/benjmansambu1" aria-label="Facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v7h4v-7H16l1-4h-3.5V8.8c0-.5.3-.8.5-.8z"/></svg></a>
@@ -12,13 +12,13 @@
       </div>
     </div>
     <div><h4>Agence</h4><ul>
-      <li><a href="/a-propos/">L'agence et l'équipe</a></li><li><a href="/services-presence-en-ligne/">Services</a></li><li><a href="/tarification-services/">Tarifs</a></li>
-      <li><a href="/portfolio-galerie/">Réalisations</a></li><li><a href="/clients-et-partenaires-agence-de-communication/">Clients et partenaires</a></li>
-      <li><a href="/formations/">Formations</a></li><li><a href="/actualites/">Actualités</a></li></ul></div>
+      <li><a href="<?php echo esc_url(itm_main('/a-propos/')); ?>">L'agence et l'équipe</a></li><li><a href="<?php echo esc_url(itm_main('/services-presence-en-ligne/')); ?>">Services</a></li><li><a href="<?php echo esc_url(itm_main('/tarification-services/')); ?>">Tarifs</a></li>
+      <li><a href="<?php echo esc_url(itm_main('/portfolio-galerie/')); ?>">Réalisations</a></li><li><a href="<?php echo esc_url(itm_main('/clients-et-partenaires-agence-de-communication/')); ?>">Clients et partenaires</a></li>
+      <li><a href="<?php echo esc_url(itm_main('/formations/')); ?>">Formations</a></li><li><a href="<?php echo esc_url(home_url('/')); ?>">Actualités</a></li></ul></div>
     <div><h4>Services</h4><ul>
-      <li><a href="/services-presence-en-ligne/#web">Développement web</a></li><li><a href="/services-presence-en-ligne/#web">Applications mobiles</a></li>
-      <li><a href="/services-presence-en-ligne/#marketing">Marketing digital</a></li><li><a href="/services-presence-en-ligne/#audiovisuel">Photos &amp; vidéo</a></li>
-      <li><a href="/services-presence-en-ligne/#branding">Communication politique</a></li></ul></div>
+      <li><a href="<?php echo esc_url(itm_main('/services-presence-en-ligne/#web')); ?>">Développement web</a></li><li><a href="<?php echo esc_url(itm_main('/services-presence-en-ligne/#web')); ?>">Applications mobiles</a></li>
+      <li><a href="<?php echo esc_url(itm_main('/services-presence-en-ligne/#marketing')); ?>">Marketing digital</a></li><li><a href="<?php echo esc_url(itm_main('/services-presence-en-ligne/#audiovisuel')); ?>">Photos &amp; vidéo</a></li>
+      <li><a href="<?php echo esc_url(itm_main('/services-presence-en-ligne/#branding')); ?>">Communication politique</a></li></ul></div>
     <div><h4>Contacts</h4><ul>
       <li><a data-wa="Bonjour ITM Digital !" href="https://wa.me/243853395757">+243 853 395 757</a></li>
       <li><a href="mailto:contact@itmdigitalcommunication.com">contact@itmdigitalcommunication.com</a></li>

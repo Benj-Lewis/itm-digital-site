@@ -4,7 +4,7 @@ while (have_posts()): the_post();
   $url = get_permalink();
   $share_txt = get_the_title() . ' ' . $url; ?>
 <section class="page-head article-head"><div class="wrap">
-  <nav class="crumbs" aria-label="Fil d'Ariane"><a href="/">Accueil</a><span>/</span><a href="<?php echo esc_url(home_url('/')); ?>">Actualités</a><?php if ($cat): ?><span>/</span><a href="<?php echo esc_url(get_category_link($cat)); ?>"><?php echo esc_html($cat->name); ?></a><?php endif; ?></nav>
+  <nav class="crumbs" aria-label="Fil d'Ariane"><a href="<?php echo esc_url(itm_main('/')); ?>">Accueil</a><span>/</span><a href="<?php echo esc_url(home_url('/')); ?>">Actualités</a><?php if ($cat): ?><span>/</span><a href="<?php echo esc_url(get_category_link($cat)); ?>"><?php echo esc_html($cat->name); ?></a><?php endif; ?></nav>
   <h1 style="margin-top:22px"><?php the_title(); ?></h1>
   <div class="news-meta"><?php if ($cat) echo '<span class="cat">' . esc_html($cat->name) . '</span>'; ?><span><?php echo get_the_date('j F Y'); ?></span><span>Par <?php the_author(); ?></span></div>
 </div></section>

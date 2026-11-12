@@ -3,7 +3,7 @@ $is_cat = is_category();
 $title = $is_cat ? single_cat_title('', false) : 'L\'actualité en <span class="grad-text">temps réel</span>';
 ?>
 <section class="page-head"><div class="wrap">
-  <nav class="crumbs" aria-label="Fil d'Ariane"><a href="/">Accueil</a><span>/</span><?php if ($is_cat): ?><a href="<?php echo esc_url(home_url('/')); ?>">Actualités</a><span>/</span><span><?php single_cat_title(); ?></span><?php else: ?><span>Actualités</span><?php endif; ?></nav>
+  <nav class="crumbs" aria-label="Fil d'Ariane"><a href="<?php echo esc_url(itm_main('/')); ?>">Accueil</a><span>/</span><?php if ($is_cat): ?><a href="<?php echo esc_url(home_url('/')); ?>">Actualités</a><span>/</span><span><?php single_cat_title(); ?></span><?php else: ?><span>Actualités</span><?php endif; ?></nav>
   <p class="eyebrow" style="margin-top:22px">Actualités</p>
   <h1><?php echo $title; ?></h1>
   <p class="lead"><?php echo $is_cat && category_description() ? wp_strip_all_tags(category_description()) : 'Politique, société, économie, éducation, finance, sport et géopolitique : l\'information décryptée par notre équipe.'; ?></p>
