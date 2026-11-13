@@ -1,27 +1,38 @@
 /* ====== Réglages ITM : modifiez ici ====== */
 const ITM = {
   whatsapp: "243853395757",
-  /* Lien WhatsApp Business officiel de l'agence (utilisé par tous les boutons) */
-  whatsappLink: "https://wa.me/message/LXFMLLVHO4UTO1",
   /* Liens de paiement par carte (PayPal) pour la formation.
      Laissez vide tant qu'ils ne sont pas créés : le client est alors guidé vers WhatsApp. */
   paypal: { "15": "", "75": "", "150": "" }
 };
 /* ========================================= */
 
-const wa = (msg) => ITM.whatsappLink || `https://wa.me/${ITM.whatsapp}?text=${encodeURIComponent(msg)}`;
+/* Page d'origine du client (ajoutée aux références générales) */
+const PAGE_CODE = location.hostname.startsWith("actualites") ? "ACTUALITES" : ({
+  "": "ACCUEIL", "a-propos": "AGENCE", "services-presence-en-ligne": "SERVICES", "tarification-services": "TARIFS",
+  "portfolio-galerie": "REALISATIONS", "clients-et-partenaires-agence-de-communication": "CLIENTS",
+  "formations": "FORMATIONS", "contact": "CONTACT"
+})[location.pathname.split("/").filter(Boolean)[0] || ""] || "SITE";
+
+/* Référence unique : CODE + numéro à 4 chiffres, ex. FORMATION-INSCRIPTION-4821 */
+const newRef = (code) => `${code || "CONTACT-" + PAGE_CODE}-${Math.floor(1000 + Math.random() * 9000)}`;
+const slug = (t) => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/[^A-Z0-9]+/g, "-").replace(/^-|-$/g, "");
 const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-/* Ouvre la discussion WhatsApp via le lien officiel wa.me : il ouvre WhatsApp
-   ou WhatsApp Business, selon l'application installée chez le visiteur. */
-function openWA(msg) {
-  const url = wa(msg || "Bonjour ITM Digital !");
+/* Lien officiel wa.me : ouvre WhatsApp ou WhatsApp Business chez le visiteur,
+   avec le message et la référence déjà écrits. */
+const wa = (msg, code) => `https://wa.me/${ITM.whatsapp}?text=${encodeURIComponent((msg || "Bonjour ITM Digital !") + "\n\nRéf. : " + newRef(code))}`;
+function openWA(msg, code) {
+  const url = wa(msg, code);
   if (isMobile) window.location.href = url;
   else window.open(url, "_blank", "noopener");
 }
 document.querySelectorAll("[data-wa]").forEach(a => {
-  a.href = wa(a.dataset.wa || "Bonjour ITM Digital !");
+  const code = a.dataset.ref && a.dataset.ref !== "CONTACT" ? a.dataset.ref : "CONTACT-" + PAGE_CODE;
+  a.href = wa(a.dataset.wa, code);
   a.rel = "noopener";
   if (!isMobile) a.target = "_blank";
+  /* nouvelle référence à chaque appui */
+  a.addEventListener("click", () => { a.href = wa(a.dataset.wa, code); });
 });
 document.querySelectorAll(".yr").forEach(n => n.textContent = new Date().getFullYear());
 
@@ -58,7 +69,7 @@ if (quote) quote.addEventListener("submit", e => {
     + (f.elements.phone && f.elements.phone.value.trim() ? `\nWhatsApp : ${f.elements.phone.value.trim()}` : "")
     + `\nService : ${f.elements.service.value}`
     + `\nProjet : ${f.elements.msg.value.trim() || "à discuter"}`;
-  openWA(msg);
+  openWA(msg, "DEVIS-" + slug(f.elements.service.value));
 });
 
 /* Paiement formation */
@@ -98,7 +109,7 @@ if (pay) {
           name = document.getElementById("p-name").value.trim(), link = ITM.paypal[amt];
     if (m === "Carte / PayPal" && link) { window.open(link, "_blank", "noopener"); return; }
     const msg = `Bonjour ITM Digital, je souhaite payer : ${product}\nMontant : ${amtEl.dataset.label} (${amt} $)\nMoyen : ${m}${name ? `\nNom : ${name}` : ""}\nMerci de m'envoyer les détails de paiement.`;
-    openWA(msg);
+    openWA(msg, `PAIEMENT-FORMATION-${slug(amtEl.dataset.label)}-${amt}USD-${slug(m)}`);
   });
 }
 
