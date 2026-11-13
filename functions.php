@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) exit;
 
 /* Adresse du site principal (menu, styles, images). À changer lors du passage sur le vrai domaine. */
 if (!defined('ITM_MAIN')) define('ITM_MAIN', 'https://itmdigitalcommunication.com');
-if (!defined('ITM_ASSETS_VER')) define('ITM_ASSETS_VER', '2026-11-13b');
+if (!defined('ITM_ASSETS_VER')) define('ITM_ASSETS_VER', '2026-11-13c');
 function itm_main($path = '/') { return rtrim(ITM_MAIN, '/') . $path; }
 
 add_action('after_setup_theme', function () {
@@ -99,3 +99,46 @@ function itm_card($feature = false) {
       </div>
     </a>
 <?php }
+
+
+/* ================= Sécurité ================= */
+/* XML-RPC désactivé (cible fréquente d'attaques) */
+add_filter('xmlrpc_enabled', '__return_false');
+add_filter('xmlrpc_methods', '__return_empty_array');
+add_filter('wp_headers', function ($h) { unset($h['X-Pingback']); return $h; });
+/* Version de WordPress masquée */
+remove_action('wp_head', 'wp_generator');
+add_filter('the_generator', '__return_empty_string');
+remove_action('wp_head', 'rsd_link');
+remove_action('wp_head', 'wlwmanifest_link');
+/* Pas de liste des comptes pour les visiteurs non connectés */
+add_filter('rest_endpoints', function ($e) {
+    if (!is_user_logged_in()) { unset($e['/wp/v2/users'], $e['/wp/v2/users/(?P<id>[\\d]+)']); }
+    return $e;
+});
+add_action('template_redirect', function () {
+    if (is_author() || isset($_GET['author'])) { wp_safe_redirect(home_url('/'), 301); exit; }
+});
+/* Message d'erreur de connexion neutre */
+add_filter('login_errors', function () { return 'Identifiant ou mot de passe incorrect.'; });
+/* Limite des tentatives de connexion : 5 essais, puis blocage de 20 minutes par adresse IP */
+function itm_login_key() { return 'itm_login_' . md5($_SERVER['REMOTE_ADDR'] ?? 'x'); }
+add_filter('authenticate', function ($user) {
+    if ((int) get_transient(itm_login_key()) >= 5) {
+        return new WP_Error('itm_locked', 'Trop de tentatives. Réessayez dans 20 minutes.');
+    }
+    return $user;
+}, 30);
+add_action('wp_login_failed', function () {
+    $k = itm_login_key(); set_transient($k, (int) get_transient($k) + 1, 20 * MINUTE_IN_SECONDS);
+});
+add_action('wp_login', function () { delete_transient(itm_login_key()); });
+/* En-têtes de sécurité */
+add_action('send_headers', function () {
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: SAMEORIGIN');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header('Strict-Transport-Security: max-age=31536000');
+});
+/* Pas de modification de fichiers depuis l'administration */
+if (!defined('DISALLOW_FILE_EDIT')) define('DISALLOW_FILE_EDIT', true);
