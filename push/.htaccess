@@ -1,0 +1,6 @@
+<IfModule mod_headers.c>
+  Header set Cache-Control "no-store"
+</IfModule>
+<Files "lib.php">
+  Require all denied
+</Files>
