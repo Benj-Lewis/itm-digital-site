@@ -20,13 +20,13 @@
       <li><a href="<?php echo esc_url(itm_main('/services-presence-en-ligne/#marketing')); ?>">Marketing digital</a></li><li><a href="<?php echo esc_url(itm_main('/services-presence-en-ligne/#audiovisuel')); ?>">Photos &amp; vidéo</a></li>
       <li><a href="<?php echo esc_url(itm_main('/services-presence-en-ligne/#branding')); ?>">Communication politique</a></li></ul></div>
     <div><h4>Contacts</h4><ul>
-      <li><a data-wa="Bonjour ITM Digital !" href="https://wa.me/message/LXFMLLVHO4UTO1">+243 853 395 757</a></li>
+      <li><a data-wa="Bonjour ITM Digital !" href="https://wa.me/243853395757">+243 853 395 757</a></li>
       <li><a href="mailto:contact@itmdigitalcommunication.com">contact@itmdigitalcommunication.com</a></li>
       <li>Lingwala, Kinshasa, RD Congo</li></ul></div>
   </div>
   <div class="fbottom"><span>© <span class="yr">2026</span> ITM Digital Communication. Tous droits réservés.</span><span>Kinshasa · RDC</span></div>
 </div></footer>
-<a class="fab" data-wa="Bonjour ITM Digital !" href="https://wa.me/message/LXFMLLVHO4UTO1" aria-label="Nous écrire sur WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15l-1.4 5 5.2-1.4A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg></a>
+<a class="fab" data-wa="Bonjour ITM Digital !" href="https://wa.me/243853395757" aria-label="Nous écrire sur WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15l-1.4 5 5.2-1.4A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg></a>
 
 <?php wp_footer(); ?>
 </body>
