@@ -515,3 +515,12 @@ footer{background:var(--navy-900);color:#9fb3e6;padding-block:56px calc(36px + e
 @keyframes i-type{0%{clip-path:inset(0 100% 0 0)}45%,90%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 100% 0 0)}}
 @keyframes i-blink{50%{opacity:0}}
 @keyframes i-spin{to{transform:rotate(360deg)}}
+
+/* Legal pages */
+.legal{max-width:760px;display:grid;gap:14px;font-size:16.5px}
+.legal h2{font-size:22px;font-weight:800;margin-top:22px}
+.legal p,.legal li{color:var(--ink-soft)}
+.legal ul{margin:0;padding-left:20px;display:grid;gap:10px}
+.legal b{color:var(--ink)}
+.legal-date{font-size:14px;margin-top:20px}
+.fbottom a{text-decoration:none}.fbottom a:hover{color:#fff}
