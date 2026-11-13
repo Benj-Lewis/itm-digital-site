@@ -524,3 +524,12 @@ footer{background:var(--navy-900);color:#9fb3e6;padding-block:56px calc(36px + e
 .legal b{color:var(--ink)}
 .legal-date{font-size:14px;margin-top:20px}
 .fbottom a{text-decoration:none}.fbottom a:hover{color:#fff}
+
+/* Paiement Mobile Money : numéros affichés */
+.momo{display:grid;gap:8px;margin:12px 0}
+.momo-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--white)}
+.momo-row > span:first-child{display:grid;flex:1;min-width:110px}
+.momo-row small{color:var(--ink-soft);font-size:12px}
+.momo-num{font:800 17px/1 var(--f-display);letter-spacing:.02em;white-space:nowrap}
+.momo-copy{min-height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper);font:700 13px/1 var(--f-display);color:var(--ink);cursor:pointer}
+.momo-ref{display:block;margin-top:10px;font-size:13px;color:var(--ink-soft);overflow-wrap:anywhere}

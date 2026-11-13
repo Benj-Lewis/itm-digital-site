@@ -3,7 +3,12 @@ const ITM = {
   whatsapp: "243853395757",
   /* Liens de paiement par carte (PayPal) pour la formation.
      Laissez vide tant qu'ils ne sont pas créés : le client est alors guidé vers WhatsApp. */
-  paypal: { "15": "", "75": "", "150": "" }
+  paypal: { "15": "", "75": "", "150": "" },
+  /* Numéros Mobile Money affichés au client pour le paiement */
+  momo: [
+    { name: "Orange Money", number: "0853395757", holder: "Benj Mansambu" },
+    { name: "M-Pesa", number: "0823976325", holder: "Benj Mansambu" }
+  ]
 };
 /* ========================================= */
 
@@ -20,9 +25,9 @@ const slug = (t) => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").t
 const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 /* Lien officiel wa.me : ouvre WhatsApp ou WhatsApp Business chez le visiteur,
    avec le message et la référence déjà écrits. */
-const wa = (msg, code) => `https://wa.me/${ITM.whatsapp}?text=${encodeURIComponent((msg || "Bonjour ITM Digital !") + "\n\nRéf. : " + newRef(code))}`;
-function openWA(msg, code) {
-  const url = wa(msg, code);
+const wa = (msg, code, ref) => `https://wa.me/${ITM.whatsapp}?text=${encodeURIComponent((msg || "Bonjour ITM Digital !") + "\n\nRéf. : " + (ref || newRef(code)))}`;
+function openWA(msg, code, ref) {
+  const url = wa(msg, code, ref);
   if (isMobile) window.location.href = url;
   else window.open(url, "_blank", "noopener");
 }
@@ -76,17 +81,24 @@ if (quote) quote.addEventListener("submit", e => {
 const pay = document.getElementById("pay");
 if (pay) {
   const howto = document.getElementById("pay-howto"), go = document.getElementById("pay-go");
-  let product = "";
+  let product = "", payRef = "";
+  const fmt = (n) => n.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, "$1 $2 $3 $4");
+  const payCode = () => { const a = sel("amount"); return `PAIEMENT-FORMATION-${slug(a.dataset.label)}-${a.value}USD-${slug(sel("method").value)}`; };
   const sel = (n) => pay.querySelector(`input[name="${n}"]:checked`);
   const refresh = () => {
     const amt = sel("amount").value, m = sel("method").value, link = ITM.paypal[amt];
-    if (m === "Carte / PayPal" && link) {
+    payRef = newRef(payCode());
+    if (m === "Mobile money") {
+      howto.innerHTML = `<strong>Envoyez ${amt} $ sur l'un de ces numéros :</strong>`
+        + `<span class="momo">` + ITM.momo.map(o => `<span class="momo-row"><span><b>${o.name}</b><small>${o.holder}</small></span><span class="momo-num">${fmt(o.number)}</span><button type="button" class="momo-copy" data-copy="${o.number}">Copier</button></span>`).join("") + `</span>`
+        + `Vérifiez que le nom affiché est bien <strong>${ITM.momo[0].holder}</strong> avant de valider. Ensuite, appuyez sur le bouton ci-dessous et joignez la capture du paiement : votre place est confirmée après vérification.`
+        + `<span class="momo-ref">Votre référence : <b>${payRef}</b></span>`;
+      go.textContent = "J'ai payé : envoyer la preuve sur WhatsApp";
+    } else if (m === "Carte / PayPal" && link) {
       howto.innerHTML = `Vous allez sur une page de paiement sécurisée PayPal pour régler <strong>${amt} $</strong> par carte bancaire ou compte PayPal.`;
       go.textContent = `Payer ${amt} $ par carte`;
     } else {
-      const how = m === "Mobile money"
-        ? "Nous vous envoyons sur WhatsApp le numéro M-Pesa, Orange Money ou Airtel Money. Après le paiement, envoyez la capture : votre place est confirmée."
-        : m === "Virement"
+      const how = m === "Virement"
         ? "Nous vous envoyons sur WhatsApp les coordonnées bancaires. Après le virement, envoyez la preuve : votre place est confirmée."
         : "Le paiement par carte arrive bientôt ici. En attendant, nous vous envoyons un lien de paiement sécurisé sur WhatsApp.";
       howto.innerHTML = `<strong>${amt} $ · ${m}.</strong> ${how}`;
@@ -100,6 +112,11 @@ if (pay) {
     document.getElementById("pay-close").focus();
   }));
   pay.addEventListener("change", refresh);
+  howto.addEventListener("click", e => {
+    const b = e.target.closest("[data-copy]"); if (!b) return;
+    const done = () => { b.textContent = "Copié"; setTimeout(() => { b.textContent = "Copier"; }, 1800); };
+    try { navigator.clipboard.writeText(b.dataset.copy).then(done).catch(() => {}); } catch (err) {}
+  });
   const close = () => { pay.hidden = true; };
   document.getElementById("pay-close").addEventListener("click", close);
   pay.addEventListener("click", e => { if (e.target === pay) close(); });
@@ -108,8 +125,11 @@ if (pay) {
     const amtEl = sel("amount"), amt = amtEl.value, m = sel("method").value,
           name = document.getElementById("p-name").value.trim(), link = ITM.paypal[amt];
     if (m === "Carte / PayPal" && link) { window.open(link, "_blank", "noopener"); return; }
-    const msg = `Bonjour ITM Digital, je souhaite payer : ${product}\nMontant : ${amtEl.dataset.label} (${amt} $)\nMoyen : ${m}${name ? `\nNom : ${name}` : ""}\nMerci de m'envoyer les détails de paiement.`;
-    openWA(msg, `PAIEMENT-FORMATION-${slug(amtEl.dataset.label)}-${amt}USD-${slug(m)}`);
+    const who = name ? `\nNom : ${name}` : "";
+    const msg = m === "Mobile money"
+      ? `Bonjour ITM Digital, j'ai payé par Mobile Money : ${product}\nMontant : ${amtEl.dataset.label} (${amt} $)${who}\nJe joins la capture du paiement.`
+      : `Bonjour ITM Digital, je souhaite payer : ${product}\nMontant : ${amtEl.dataset.label} (${amt} $)\nMoyen : ${m}${who}\nMerci de m'envoyer les détails de paiement.`;
+    openWA(msg, payCode(), payRef);
   });
 }
 
