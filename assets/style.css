@@ -545,3 +545,15 @@ footer{background:var(--navy-900);color:#9fb3e6;padding-block:56px calc(36px + e
 .install-x{flex:none;width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:20px;line-height:1;cursor:pointer}
 @media (max-width:420px){.install{right:max(12px,env(safe-area-inset-right,0px));bottom:max(84px,calc(env(safe-area-inset-bottom,0px) + 80px))}}
 @media (prefers-reduced-motion:reduce){.install{transition:none}}
+
+/* Bouton « Recevoir les nouveaux articles » */
+.push-btn{display:inline-grid;grid-template-columns:auto 1fr;align-items:center;column-gap:10px;row-gap:4px;min-height:46px;padding:10px 18px;border-radius:999px;font:700 14px/1.2 var(--f-display);cursor:pointer;text-align:left;max-width:100%}
+.push-btn svg{width:18px;height:18px;flex:none}
+.push-btn small{grid-column:1/-1;font:500 12.5px/1.4 var(--f-body);opacity:.85}
+.push-btn:has(small){border-radius:18px}
+.push-btn:disabled{opacity:.7;cursor:progress}
+.push-dark{margin-top:18px;background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.18)}
+.push-light{background:var(--white);color:var(--ink);border:1px solid var(--line)}
+.push-btn[data-state="on"] svg{color:var(--cyan)}
+.push-light[data-state="on"] svg{color:var(--blue)}
+.push-btn[data-state="on"]{border-color:var(--cyan)}

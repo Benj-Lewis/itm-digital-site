@@ -204,3 +204,100 @@ if ("serviceWorker" in navigator && !location.hostname.startsWith("actualites"))
   window.addEventListener("appinstalled", () => hide(false));
   if (ios) setTimeout(() => show("Touchez <b>Partager</b> <svg viewBox=\"0 0 24 24\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M12 3v12M8 7l4-4 4 4M5 12v8h14v-8\"/></svg> puis <b>« Sur l'écran d'accueil »</b>."), 6000);
 })();
+
+/* ====== Notifications des nouveaux articles ====== */
+(() => {
+  const MAIN = "https://itmdigitalcommunication.com";
+  const onMain = !location.hostname.startsWith("actualites");
+  const store = { get: (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                  set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+
+  /* Les visites déclenchent la vérification des nouveaux articles côté serveur (au plus toutes les 10 min par visiteur) */
+  if (Date.now() - (+store.get("itm-push-ping") || 0) > 6e5) {
+    store.set("itm-push-ping", Date.now());
+    setTimeout(() => fetch(onMain ? "/push/notify.php" : MAIN + "/push/notify.php", { method: "POST", mode: onMain ? "same-origin" : "no-cors", keepalive: true }).catch(() => {}), 3000);
+  }
+  if (!onMain) return;
+
+  const supported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+  const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  if (!supported && !ios) return;
+
+  const bell = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>';
+  const toBytes = (b64) => { const s = atob((b64 + "=".repeat((4 - b64.length % 4) % 4)).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(s, (c) => c.charCodeAt(0)); };
+  const same = (a, b) => a && b && a.byteLength === b.byteLength && new Uint8Array(a).every((v, i) => v === b[i]);
+  const send = (action, endpoint) => fetch("/push/subscribe.php", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, endpoint }) })
+    .then((r) => { if (!r.ok) throw new Error("server"); });
+
+  const buttons = [];
+  const place = (where, cls) => {
+    if (!where) return;
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "push-btn " + cls;
+    where.appendChild(b); buttons.push(b);
+  };
+  place(document.querySelector("#dernieres-actualites .split-head"), "push-light");
+  document.querySelectorAll(".fbrand").forEach((f) => place(f, "push-dark"));
+  if (!buttons.length) return;
+
+  const render = (state, note) => buttons.forEach((b) => {
+    const label = { off: "Recevoir les nouveaux articles", on: "Notifications activées", busy: "Activation…", blocked: "Notifications bloquées", ios: "Recevoir les nouveaux articles" }[state];
+    b.innerHTML = bell + `<span>${label}</span>` + (note ? `<small>${note}</small>` : "");
+    b.dataset.state = state;
+    b.setAttribute("aria-pressed", state === "on");
+    b.disabled = state === "busy";
+  });
+
+  if (!supported) { /* iPhone dans Safari : il faut d'abord installer l'app */
+    render("ios");
+    buttons.forEach((b) => b.addEventListener("click", () => render("ios", "Sur iPhone, installez d'abord l'app : Partager › Sur l'écran d'accueil, puis ouvrez-la et appuyez ici.")));
+    return;
+  }
+
+  const sync = async () => {
+    if (Notification.permission === "denied") return render("blocked", "Autorisez les notifications dans les réglages du navigateur.");
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    render(sub && Notification.permission === "granted" ? "on" : "off");
+    /* Une fois par jour, on confirme l'abonnement au serveur */
+    if (sub && Date.now() - (+store.get("itm-push-sync") || 0) > 864e5) send("subscribe", sub.endpoint).then(() => store.set("itm-push-sync", Date.now())).catch(() => {});
+  };
+
+  const subscribe = async () => {
+    render("busy");
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") return sync();
+      const reg = await navigator.serviceWorker.ready;
+      const { publicKey } = await (await fetch("/push/key.php", { cache: "no-store" })).json();
+      const key = toBytes(publicKey);
+      let sub = await reg.pushManager.getSubscription();
+      if (sub && !same(sub.options.applicationServerKey, key)) { await sub.unsubscribe(); sub = null; }
+      if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+      await send("subscribe", sub.endpoint);
+      store.set("itm-push-sync", Date.now());
+      render("on", "Vous serez prévenu à chaque nouvel article.");
+    } catch (err) {
+      render("off", "L'activation n'a pas abouti. Vérifiez votre connexion et réessayez.");
+    }
+  };
+
+  const unsubscribe = async () => {
+    if (!confirm("Ne plus recevoir les notifications des nouveaux articles ?")) return;
+    render("busy");
+    try {
+      const sub = await (await navigator.serviceWorker.ready).pushManager.getSubscription();
+      if (sub) { await send("unsubscribe", sub.endpoint).catch(() => {}); await sub.unsubscribe(); }
+    } catch (err) {}
+    render("off", "Notifications désactivées.");
+  };
+
+  buttons.forEach((b) => b.addEventListener("click", () => {
+    if (b.dataset.state === "on") unsubscribe();
+    else if (b.dataset.state === "off") subscribe();
+    else if (b.dataset.state === "blocked") render("blocked", "Autorisez les notifications dans les réglages du navigateur (icône à gauche de l'adresse), puis rechargez la page.");
+  }));
+  render("off");
+  sync().catch(() => {});
+})();
