@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) exit;
 
 /* Adresse du site principal (menu, styles, images). À changer lors du passage sur le vrai domaine. */
 if (!defined('ITM_MAIN')) define('ITM_MAIN', 'https://itmdigitalcommunication.com');
-if (!defined('ITM_ASSETS_VER')) define('ITM_ASSETS_VER', '2026-11-13d');
+if (!defined('ITM_ASSETS_VER')) define('ITM_ASSETS_VER', '2026-11-13e');
 function itm_main($path = '/') { return rtrim(ITM_MAIN, '/') . $path; }
 
 add_action('after_setup_theme', function () {
