@@ -2,6 +2,15 @@ DirectoryIndex index.html index.php
 ErrorDocument 404 /404.html
 Options -Indexes
 
+# Application web (PWA)
+AddType application/manifest+json .webmanifest
+<IfModule mod_headers.c>
+  <FilesMatch "^(sw\.js|manifest\.webmanifest)$">
+    Header set Cache-Control "no-cache"
+    Header set Service-Worker-Allowed "/"
+  </FilesMatch>
+</IfModule>
+
 # Une seule adresse officielle : www -> sans www
 RewriteEngine On
 RewriteCond %{HTTP_HOST} ^www\.itmdigitalcommunication\.com$ [NC]

@@ -533,3 +533,15 @@ footer{background:var(--navy-900);color:#9fb3e6;padding-block:56px calc(36px + e
 .momo-num{font:800 17px/1 var(--f-display);letter-spacing:.02em;white-space:nowrap}
 .momo-copy{min-height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper);font:700 13px/1 var(--f-display);color:var(--ink);cursor:pointer}
 .momo-ref{display:block;margin-top:10px;font-size:13px;color:var(--ink-soft);overflow-wrap:anywhere}
+
+/* Bandeau « Installer l'application » */
+.install{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(84px,calc(env(safe-area-inset-right,0px) + 84px));bottom:max(14px,calc(env(safe-area-inset-bottom,0px) + 10px));z-index:55;max-width:460px;display:flex;align-items:center;gap:12px;padding:12px 12px 12px 14px;border-radius:18px;background:var(--navy-800);color:#fff;border:1px solid rgba(71,198,224,.45);box-shadow:0 18px 40px -14px rgba(0,0,0,.6),0 0 0 4px rgba(76,121,232,.15);transform:translateY(140%);opacity:0;transition:transform .3s ease,opacity .3s ease}
+.install.on{transform:none;opacity:1}
+.install img{border-radius:11px;flex:none}
+.install-txt{display:grid;gap:2px;flex:1;min-width:0;font-size:13px;line-height:1.35;color:#cbd6f5}
+.install-txt b{color:#fff;font:700 14px/1.2 var(--f-display)}
+.install-txt svg{vertical-align:-2px}
+.install .btn{flex:none;min-height:40px;padding:0 16px}
+.install-x{flex:none;width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:20px;line-height:1;cursor:pointer}
+@media (max-width:420px){.install{right:max(12px,env(safe-area-inset-right,0px));bottom:max(84px,calc(env(safe-area-inset-bottom,0px) + 80px))}}
+@media (prefers-reduced-motion:reduce){.install{transition:none}}

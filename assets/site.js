@@ -155,3 +155,52 @@ if (newsBox) {
     })
     .catch(() => {});
 }
+
+/* ====== Application installable (PWA) ====== */
+if ("serviceWorker" in navigator && !location.hostname.startsWith("actualites")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+}
+(() => {
+  const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  if (standalone || location.hostname.startsWith("actualites")) return;
+  const KEY = "itm-install-later";
+  let later = 0;
+  try { later = +localStorage.getItem(KEY) || 0; } catch (err) {}
+  if (Date.now() - later < 7 * 864e5) return; /* « Plus tard » : on ne redemande pas avant 7 jours */
+
+  const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS/i.test(navigator.userAgent);
+  let deferred = null;
+  const bar = document.createElement("div");
+  bar.className = "install";
+  bar.setAttribute("role", "dialog");
+  bar.setAttribute("aria-label", "Installer l'application ITM Digital");
+  const show = (text, action) => {
+    bar.innerHTML = `<img src="/assets/app/icon-192.png" alt="" width="44" height="44">`
+      + `<div class="install-txt"><b>Application ITM Digital</b><span>${text}</span></div>`
+      + (action ? `<button type="button" class="btn btn-grad btn-sm" data-install>${action}</button>` : "")
+      + `<button type="button" class="install-x" aria-label="Plus tard">×</button>`;
+    document.body.appendChild(bar);
+    requestAnimationFrame(() => bar.classList.add("on"));
+  };
+  const hide = (remember) => {
+    bar.classList.remove("on");
+    setTimeout(() => bar.remove(), 300);
+    if (remember) try { localStorage.setItem(KEY, Date.now()); } catch (err) {}
+  };
+  bar.addEventListener("click", async (e) => {
+    if (e.target.closest(".install-x")) return hide(true);
+    if (e.target.closest("[data-install]") && deferred) {
+      deferred.prompt();
+      const { outcome } = await deferred.userChoice;
+      deferred = null;
+      hide(outcome !== "accepted");
+    }
+  });
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferred = e;
+    setTimeout(() => show("Sur votre écran d'accueil, même hors connexion.", "Installer"), 4000);
+  });
+  window.addEventListener("appinstalled", () => hide(false));
+  if (ios) setTimeout(() => show("Touchez <b>Partager</b> <svg viewBox=\"0 0 24 24\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M12 3v12M8 7l4-4 4 4M5 12v8h14v-8\"/></svg> puis <b>« Sur l'écran d'accueil »</b>."), 6000);
+})();

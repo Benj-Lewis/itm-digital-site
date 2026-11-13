@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "ITM Digital Communication",
+  "short_name": "ITM Digital",
+  "description": "Agence de communication 360° à Kinshasa : marketing digital, sites web, applications, photo et vidéo, formations.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#071233",
+  "theme_color": "#071233",
+  "categories": ["business", "productivity", "education"],
+  "icons": [
+    { "src": "/assets/app/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/app/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Tarifs", "short_name": "Tarifs", "url": "/tarification-services/?source=app", "icons": [{ "src": "/assets/app/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Formations", "short_name": "Formations", "url": "/formations/?source=app", "icons": [{ "src": "/assets/app/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Démarrer un projet", "short_name": "Contact", "url": "/contact/?source=app", "icons": [{ "src": "/assets/app/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
