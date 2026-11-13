@@ -3,7 +3,7 @@ Theme Name: ITM Actualités
 Theme URI: https://itmdigitalcommunication.com/actualites/
 Author: ITM Digital Communication
 Description: Thème de la rubrique Actualités, aux couleurs du site ITM Digital Communication. Utilise la feuille de style principale du site (/assets/style.css).
-Version: 1.0.2
+Version: 1.0.3
 Requires at least: 6.0
 Requires PHP: 7.4
 Text Domain: itm-actualites
@@ -48,7 +48,7 @@ Text Domain: itm-actualites
 .article-body a{color:var(--blue)}
 .article-body img{display:block;max-width:100%;height:auto;border-radius:14px}
 .article-body figure,.article-body .wp-block-image{max-width:100%;margin-left:0;margin-right:0}
-.article-body .wp-block-image img{width:100%;max-height:70vh;object-fit:cover}
+.article-body .wp-block-image img{width:100%;height:auto}
 .article-body .alignleft,.article-body .alignright{float:none;margin:1.1em 0}
 .article-body .alignwide,.article-body .alignfull{width:100%;max-width:100%}
 .article-body iframe,.article-body video{max-width:100%}
