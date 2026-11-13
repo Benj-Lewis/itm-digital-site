@@ -2,6 +2,11 @@ DirectoryIndex index.html index.php
 ErrorDocument 404 /404.html
 Options -Indexes
 
+# Une seule adresse officielle : www -> sans www
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\.itmdigitalcommunication\.com$ [NC]
+RewriteRule ^(.*)$ https://itmdigitalcommunication.com/$1 [R=301,L]
+
 # Ancienne adresse des actualités -> nouvelle rubrique
 RedirectMatch 301 ^/actualites(/.*)?$ https://actualites.itmdigitalcommunication.com/
 
