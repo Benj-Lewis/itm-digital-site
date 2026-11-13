@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) exit;
 
 /* Adresse du site principal (menu, styles, images). À changer lors du passage sur le vrai domaine. */
 if (!defined('ITM_MAIN')) define('ITM_MAIN', 'https://itmdigitalcommunication.com');
-if (!defined('ITM_ASSETS_VER')) define('ITM_ASSETS_VER', '2026-11-13c');
+if (!defined('ITM_ASSETS_VER')) define('ITM_ASSETS_VER', '2026-11-13d');
 function itm_main($path = '/') { return rtrim(ITM_MAIN, '/') . $path; }
 
 add_action('after_setup_theme', function () {
@@ -102,9 +102,13 @@ function itm_card($feature = false) {
 
 
 /* ================= Sécurité ================= */
-/* XML-RPC désactivé (cible fréquente d'attaques) */
-add_filter('xmlrpc_enabled', '__return_false');
-add_filter('xmlrpc_methods', '__return_empty_array');
+/* XML-RPC : actif uniquement pour l'application mobile WordPress.
+   Les « pingbacks » (utilisés pour les attaques) sont retirés,
+   et la limite de 5 essais de connexion s'applique aussi à l'application. */
+add_filter('xmlrpc_methods', function ($m) {
+    unset($m['pingback.ping'], $m['pingback.extensions.getPingbacks']);
+    return $m;
+});
 add_filter('wp_headers', function ($h) { unset($h['X-Pingback']); return $h; });
 /* Version de WordPress masquée */
 remove_action('wp_head', 'wp_generator');
