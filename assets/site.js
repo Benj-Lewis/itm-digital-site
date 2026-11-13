@@ -1,13 +1,15 @@
 /* ====== Réglages ITM : modifiez ici ====== */
 const ITM = {
   whatsapp: "243853395757",
+  /* Lien WhatsApp Business officiel de l'agence (utilisé par tous les boutons) */
+  whatsappLink: "https://wa.me/message/LXFMLLVHO4UTO1",
   /* Liens de paiement par carte (PayPal) pour la formation.
      Laissez vide tant qu'ils ne sont pas créés : le client est alors guidé vers WhatsApp. */
   paypal: { "15": "", "75": "", "150": "" }
 };
 /* ========================================= */
 
-const wa = (msg) => `https://wa.me/${ITM.whatsapp}?text=${encodeURIComponent(msg)}`;
+const wa = (msg) => ITM.whatsappLink || `https://wa.me/${ITM.whatsapp}?text=${encodeURIComponent(msg)}`;
 const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 /* Ouvre la discussion WhatsApp via le lien officiel wa.me : il ouvre WhatsApp
    ou WhatsApp Business, selon l'application installée chez le visiteur. */
