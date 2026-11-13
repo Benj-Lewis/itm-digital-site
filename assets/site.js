@@ -12,6 +12,10 @@ const ITM = {
 };
 /* ========================================= */
 
+const KB_VER = (document.currentScript && document.currentScript.dataset.kb) || new Date().toISOString().slice(0, 10);
+const ON_NEWS = location.hostname.startsWith("actualites");
+const MAIN = ON_NEWS ? "https://itmdigitalcommunication.com" : "";
+
 /* Page d'origine du client (ajoutée aux références générales) */
 const PAGE_CODE = location.hostname.startsWith("actualites") ? "ACTUALITES" : ({
   "": "ACCUEIL", "a-propos": "AGENCE", "services-presence-en-ligne": "SERVICES", "tarification-services": "TARIFS",
@@ -203,4 +207,118 @@ if ("serviceWorker" in navigator && !location.hostname.startsWith("actualites"))
   });
   window.addEventListener("appinstalled", () => hide(false));
   if (ios) setTimeout(() => show("Touchez <b>Partager</b> <svg viewBox=\"0 0 24 24\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M12 3v12M8 7l4-4 4 4M5 12v8h14v-8\"/></svg> puis <b>« Sur l'écran d'accueil »</b>."), 6000);
+})();
+
+
+/* ====== Assistant du site (recherche guidée, sans IA) ====== */
+(() => {
+  const esc = (x) => String(x).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const norm = (t) => String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9$]+/g, " ").trim();
+  const STOP = new Set("a au aux avec ce ces cette dans de des du elle en est et il ils je la le les leur ma mes mon ne nos notre nous on ou par pas pour que quel quelle quels quelles qui sa se ses son sur ta tes ton tu un une vos votre vous y d l j c s m n qu est-ce estce avez faites fait faire peux peut veux voudrais aimerais besoin cherche svp merci bonjour bonsoir salut comment".split(" "));
+  const stem = (w) => { w = w.replace(/(es|s|x)$/, ""); return w.length > 6 ? w.slice(0, 6) : w; };
+  const SYN = [
+    ["prix", "tarif", "cout", "coute", "combien", "montant", "devis", "cher", "budget"],
+    ["site", "web", "internet", "vitrine", "siteweb"],
+    ["boutique", "ecommerce", "commerce", "vente", "vendre"],
+    ["musique", "chanson", "single", "album", "ep", "son", "streaming", "distribution", "distribuer", "spotify", "boomplay", "audiomack", "artiste", "label", "morceau", "titre"],
+    ["pub", "publicite", "boost", "booster", "sponsor", "sponsoriser", "promotion", "promo", "annonce", "campagne", "ads"],
+    ["reseaux", "sociaux", "community", "facebook", "instagram", "tiktok", "page", "gestion"],
+    ["photo", "shooting", "photographe", "portrait", "image"],
+    ["video", "clip", "tournage", "film", "spot", "montage", "videaste"],
+    ["mariage", "anniversaire", "evenement", "ceremonie", "fete", "couverture"],
+    ["app", "application", "mobile", "android", "ios"],
+    ["formation", "cours", "apprendre", "former", "etudier", "inscription", "inscrire"],
+    ["paiement", "payer", "mpesa", "orange", "money", "carte", "virement"],
+    ["contact", "contacter", "adresse", "telephone", "numero", "whatsapp", "email", "mail", "joindre", "appeler", "localisation"],
+    ["politique", "politicien", "candidat", "elu", "meeting", "campagne"],
+    ["logo", "branding", "charte", "identite", "affiche", "visuel"],
+    ["equipe", "fondateur", "ceo", "agence", "qui", "histoire"],
+    ["actualite", "article", "blog", "news", "journal"],
+    ["seo", "google", "referencement", "visibilite"]
+  ].map(g => g.map(stem));
+  const tokens = (t) => norm(t).split(" ").filter(w => w && !STOP.has(w)).map(stem);
+
+  let KB = null, loading = null;
+  const load = () => loading || (loading = fetch(MAIN + "/assets/assistant.json?v=" + KB_VER)
+    .then(r => r.json())
+    .then(d => { KB = d.map(e => ({ ...e, T: new Set(tokens(e.t)), W: new Set(tokens((e.w || "") + " " + e.k)), X: new Set(tokens(e.x + " " + e.p)) })); })
+    .catch(() => { KB = []; }));
+
+  function search(q) {
+    const qt = [...new Set(tokens(q))];
+    if (!qt.length) return [];
+    const wantsPrice = qt.some(t => SYN[0].includes(t));
+    const scored = KB.map(e => {
+      let s = 0, hits = 0;
+      qt.forEach(t => {
+        const alts = [t, ...SYN.filter(g => g.includes(t)).flat()];
+        let best = 0;
+        alts.forEach((a, i) => {
+          const w = i === 0 ? 1 : .55;
+          if (e.T.has(a)) best = Math.max(best, 4 * w);
+          else if (e.W.has(a)) best = Math.max(best, 2.5 * w);
+          else if (e.X.has(a)) best = Math.max(best, 1.5 * w);
+        });
+        if (best) hits++;
+        s += best;
+      });
+      if (wantsPrice && e.p) s += 1.5;
+      return { e, s: s * (hits / qt.length + .5), hits };
+    }).filter(r => r.hits && r.s >= 2).sort((a, b) => b.s - a.s);
+    return scored.slice(0, 4).map(r => r.e);
+  }
+
+  /* Interface */
+  const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.2-4.4A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5M12 16.5v.1"/></svg>';
+  const btn = document.createElement("button");
+  btn.type = "button"; btn.className = "ask-fab"; btn.setAttribute("aria-label", "Ouvrir l'assistant du site");
+  btn.innerHTML = ICON;
+  const box = document.createElement("div");
+  box.className = "ask"; box.hidden = true;
+  box.setAttribute("role", "dialog"); box.setAttribute("aria-label", "Assistant du site ITM Digital");
+  box.innerHTML = `<div class="ask-head"><span class="ask-ico">${ICON}</span><div><b>Assistant ITM</b><small>Trouvez une offre, un prix, une page</small></div><button type="button" class="ask-x" aria-label="Fermer l'assistant">×</button></div>`
+    + `<div class="ask-log" aria-live="polite"></div>`
+    + `<form class="ask-form"><input type="text" name="q" autocomplete="off" maxlength="140" placeholder="Votre question…" aria-label="Votre question"><button type="submit" class="btn btn-grad btn-sm">Envoyer</button></form>`;
+  document.body.append(btn, box);
+  const log = box.querySelector(".ask-log"), form = box.querySelector("form"), input = form.elements.q;
+  const CHIPS = ["Prix d'un site web", "Distribuer ma musique", "Booster une publication", "Formations", "Photo et vidéo", "Contacter l'agence"];
+  const chipsHtml = () => `<div class="ask-chips">${CHIPS.map(c => `<button type="button" data-q="${esc(c)}">${esc(c)}</button>`).join("")}</div>`;
+  const say = (html, who) => {
+    const m = document.createElement("div");
+    m.className = "ask-msg " + (who || "bot"); m.innerHTML = html; log.appendChild(m);
+    (who === "me" ? m : m).scrollIntoView({ block: who === "me" ? "end" : "start", behavior: "smooth" });
+    return m;
+  };
+  const waBtn = (q, label) => `<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${esc(wa("Bonjour ITM Digital, j'ai une question : " + q, "ASSISTANT"))}">${label}</a>`;
+
+  async function answer(q) {
+    const me = document.createElement("div"); me.className = "ask-msg me"; me.textContent = q; log.appendChild(me);
+    await load();
+    const res = search(q);
+    if (!res.length) {
+      say(`<p>Je n'ai pas trouvé cette information sur le site. Un conseiller peut vous répondre directement.</p>${waBtn(q, "Poser la question sur WhatsApp")}<p class="ask-sub">Ou essayez :</p>${chipsHtml()}`);
+      return;
+    }
+    say(`<p>Voici ce que j'ai trouvé :</p>` + res.map(e => {
+      const ext = /^https?:/.test(e.u);
+      const x = e.x.length > 190 ? e.x.slice(0, 187) + "…" : e.x;
+      return `<a class="ask-card" href="${esc(ext ? e.u : MAIN + e.u)}"><span class="ask-tag">${esc(e.k)}</span><b>${esc(e.t)}</b>${e.p ? `<em>${esc(e.p)}</em>` : ""}<span>${esc(x)}</span><i>Ouvrir la page ›</i></a>`;
+    }).join("") + `<p class="ask-sub">Pas la bonne réponse ?</p>${waBtn(q, "Parler à un conseiller")}`);
+  }
+
+  const open = () => {
+    box.hidden = false; btn.classList.add("on"); load();
+    if (!log.children.length) say(`<p>Bonjour ! Je connais les services, les tarifs et les formations d'ITM Digital. Que cherchez-vous ?</p>${chipsHtml()}`);
+    setTimeout(() => input.focus({ preventScroll: true }), 50);
+  };
+  const close = () => { box.hidden = true; btn.classList.remove("on"); };
+  btn.addEventListener("click", () => box.hidden ? open() : close());
+  box.querySelector(".ask-x").addEventListener("click", close);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !box.hidden) { close(); btn.focus(); } });
+  form.addEventListener("submit", e => { e.preventDefault(); const q = input.value.trim(); if (!q) return; input.value = ""; answer(q); });
+  log.addEventListener("click", e => {
+    const c = e.target.closest("[data-q]");
+    if (c) return answer(c.dataset.q);
+    if (e.target.closest(".ask-card")) close();
+  });
 })();

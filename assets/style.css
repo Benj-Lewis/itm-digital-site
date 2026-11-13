@@ -552,3 +552,38 @@ footer{background:var(--navy-900);color:#9fb3e6;padding-block:56px calc(36px + e
 .install-x{flex:none;width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:20px;line-height:1;cursor:pointer}
 @media (max-width:420px){.install{right:max(12px,env(safe-area-inset-right,0px));bottom:max(84px,calc(env(safe-area-inset-bottom,0px) + 80px))}}
 @media (prefers-reduced-motion:reduce){.install{transition:none}}
+
+/* Assistant du site */
+.ask-fab{position:fixed;right:max(21px,calc(env(safe-area-inset-right,0px) + 15px));bottom:max(88px,calc(env(safe-area-inset-bottom,0px) + 82px));z-index:50;width:52px;height:52px;border-radius:50%;border:0;cursor:pointer;background:var(--grad);color:#fff;display:grid;place-items:center;box-shadow:0 14px 30px -10px rgba(0,0,0,.45)}
+.ask-fab svg{width:26px;height:26px}
+.ask-fab.on{outline:3px solid rgba(76,121,232,.35)}
+.ask{position:fixed;z-index:58;right:max(18px,calc(env(safe-area-inset-right,0px) + 12px));bottom:max(150px,calc(env(safe-area-inset-bottom,0px) + 144px));width:min(380px,calc(100vw - 36px));height:min(540px,calc(100dvh - 240px));display:flex;flex-direction:column;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 30px 70px -20px rgba(7,18,51,.55)}
+.ask-head{display:flex;align-items:center;gap:12px;padding:14px 14px 14px 16px;background:var(--navy-900);color:#fff}
+.ask-head > div{flex:1;display:grid;gap:2px;min-width:0}
+.ask-head b{font:800 15px/1.2 var(--f-display)}
+.ask-head small{font-size:12px;color:#9fb3e6}
+.ask-ico{width:36px;height:36px;border-radius:11px;background:var(--grad);display:grid;place-items:center;flex:none}
+.ask-ico svg{width:20px;height:20px}
+.ask-x{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:22px;line-height:1;cursor:pointer}
+.ask-log{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ask-msg{max-width:92%;font-size:14px;line-height:1.5;display:grid;gap:8px}
+.ask-msg.bot{align-self:flex-start;width:92%}
+.ask-msg.bot > p{background:var(--white);border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:10px 12px;margin:0;justify-self:start}
+.ask-msg.bot > p.ask-sub{background:none;border:0;padding:2px 2px 0;color:var(--ink-soft);font-size:13px}
+.ask-msg.me{align-self:flex-end;background:var(--blue);color:#fff;border-radius:14px 14px 4px 14px;padding:9px 12px;overflow-wrap:anywhere}
+.ask-msg .btn{justify-self:start}
+.ask-card{display:grid;gap:4px;padding:12px 14px;background:var(--white);border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink)}
+.ask-card:hover{border-color:#b9c6ee}
+.ask-card b{font:800 15px/1.25 var(--f-display)}
+.ask-card em{font-style:normal;font:800 14px/1.3 var(--f-display);color:var(--blue)}
+.ask-card span{color:var(--ink-soft);font-size:13px}
+.ask-card i{font-style:normal;font:700 13px/1 var(--f-display);color:var(--blue);margin-top:4px}
+.ask-card .ask-tag{font:800 10px/1 var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.ask-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ask-chips button{min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--ink);font:700 13px/1 var(--f-display);cursor:pointer}
+.ask-chips button:hover{border-color:var(--blue);color:var(--blue)}
+.ask-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);background:var(--white)}
+.ask-form input{flex:1;min-width:0;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:500 16px/1 var(--f-body, inherit)}
+.ask-form .btn{min-height:44px;flex:none}
+@media (max-width:520px){.ask{left:0;right:0;bottom:0;width:auto;height:min(78dvh,620px);border-radius:20px 20px 0 0;border-bottom:0;z-index:62}.ask-form{padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}}
+@media (max-width:420px){.install{right:max(84px,calc(env(safe-area-inset-right,0px) + 84px))}}

@@ -11,6 +11,13 @@ AddType application/manifest+json .webmanifest
   </FilesMatch>
 </IfModule>
 
+# Assistant du site : base de connaissances lisible depuis la rubrique Actualités
+<IfModule mod_headers.c>
+  <FilesMatch "^assistant\.json$">
+    Header set Access-Control-Allow-Origin "https://actualites.itmdigitalcommunication.com"
+  </FilesMatch>
+</IfModule>
+
 # Une seule adresse officielle : www -> sans www
 RewriteEngine On
 RewriteCond %{HTTP_HOST} ^www\.itmdigitalcommunication\.com$ [NC]
