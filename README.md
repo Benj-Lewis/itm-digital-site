@@ -16,4 +16,4 @@ Déploiement automatique : chaque envoi sur `main` met le site à jour sur Hosti
   - Chaque visite du site lance une vérification (au plus toutes les 2 minutes) : dès qu'un nouvel article est publié sur Actualités, les abonnés sont prévenus une seule fois.
   - Pour une annonce plus rapide même sans visite, ajoutez dans hPanel › Avancé › Tâches Cron, toutes les 5 minutes :
     `curl -s -X POST https://itmdigitalcommunication.com/push/notify.php`
-  - État du dernier envoi : ouvrir https://itmdigitalcommunication.com/push/notify.php
+  - Pour lancer une vérification à la main et voir son résultat : ouvrir https://itmdigitalcommunication.com/push/notify.php
